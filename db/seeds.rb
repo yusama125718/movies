@@ -8,6 +8,6 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-# Cinema.create(name: "T・ジョイ出雲", corp: "tjoy", base_url: "https://tjoy.jp/t-joy_izumo")
-# Cinema.create(name: "MOVIX日吉津", corp: "movix", base_url: "https://www.smt-cinema.com/site/hiezu/")
+Cinema.create(name: "T・ジョイ出雲", corp: "tjoy", base_url: "https://tjoy.jp/t-joy_izumo")
+Cinema.create(name: "MOVIX日吉津", corp: "movix", base_url: "https://www.smt-cinema.com/site/hiezu/")
 Cinema.create(name: "イオンシネマ松江", corp: "aeon_cinema", base_url: "https://theater.aeoncinema.com/schedule/v2/data/matsue/")

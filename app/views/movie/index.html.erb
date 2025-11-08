@@ -1,0 +1,56 @@
+<% content_for :title, "映画まとめ" %>
+
+<p class="movie-index-page__subheading">各館の上映状況</p>
+
+<% selected_date = @search&.dig(:schedule, :date).presence || Date.today.to_s %>
+<% selected_title = @search&.dig(:title).presence %>
+
+<%= form_with url: url_for(action: :index), method: :get, scope: :movie, local: true, class: "movie-search" do %>
+  <div class="movie-search__field">
+    <label for="movie_schedule_date" class="movie-search__label">上映日</label>
+    <input type="date" name="movie[schedule][date]" id="movie_schedule_date" class="movie-search__date" value="<%= selected_date %>">
+  </div>
+  <div class="movie-search__field">
+    <label for="movie_title" class="movie-search__label">タイトル</label>
+    <input type="text" name="movie[title]" id="movie_title" class="movie-search__input" placeholder="タイトル" value="<%= selected_title %>">
+  </div>
+  <button type="submit" class="movie-search__submit">再検索</button>
+<% end %>
+
+<div class="movie-list">
+  <% movies = (@movies || []).compact %>
+  <% if movies.present? %>
+    <% cinema_lookup = Cinema.order(:name).index_by(&:id) %>
+    <% movies.each do |movie| %>
+      <% next if movie.blank? %>
+      <article class="movie-card">
+        <div class="movie-card__image">
+          <% if movie[:image].present? %>
+            <%= image_tag movie[:image], alt: movie[:title] %>
+          <% else %>
+            画像
+          <% end %>
+        </div>
+        <div class="movie-card__body">
+          <h2 class="movie-card__title">[<%= movie[:title] %>]</h2>
+          <% cinema_ids = movie[:schedules]&.select { |_cinema_id, count| count.to_i.positive? }&.keys || [] %>
+          <% cinema_names = cinema_ids.map { |id| cinema_lookup[id]&.name }.compact %>
+          <div>
+            <div class="movie-card__cinemas-label">上映館</div>
+            <% if cinema_names.present? %>
+              <ul class="movie-card__cinemas">
+                <% cinema_names.each do |name| %>
+                  <li class="movie-card__cinemas-item"><%= name %></li>
+                <% end %>
+              </ul>
+            <% else %>
+              <p class="movie-list__empty">上映予定はありません。</p>
+            <% end %>
+          </div>
+        </div>
+      </article>
+    <% end %>
+  <% else %>
+    <p class="movie-list__empty">上映予定の映画が見つかりませんでした。</p>
+  <% end %>
+</div>

@@ -24,6 +24,9 @@
   </head>
 
   <body>
-    <%= yield %>
+    <div class="movie-index-page">
+      <h1 class="movie-index-page__heading"><%= content_for(:title) || "Movies" %></h1>
+      <%= yield %>
+    </div>
   </body>
 </html>

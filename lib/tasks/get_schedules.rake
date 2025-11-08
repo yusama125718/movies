@@ -1,16 +1,16 @@
 namespace :get_schedules do
   task :execute => :environment do
     require "selenium-webdriver"
+  
+    Movie.destroy_all
+    Rails.logger.info "全てのデータを削除しました。"
+    puts "[INFO] 全てのデータを削除しました。"
 
     Rails.logger.info "上映スケジュールの取得を開始します"
     puts "[INFO] 上映スケジュールの取得を開始します"
     cinemas = Cinema.all
     
     cinemas.each do |cinema|
-      Movie.where(cinema: cinema).destroy_all
-      Rails.logger.info "#{cinema.name}のデータを削除しました。"
-      puts "[INFO] #{cinema.name}のデータを削除しました。"
-
       case cinema.corp
       when 'aeon_cinema'
         get_aeon_schedule(cinema)
@@ -94,10 +94,9 @@ namespace :get_schedules do
       # 以降は「値」だけを使うので stale とは無縁
       sections_data.each do |sec|
         next if sec['title'].blank?
-        movie = Movie.find_by(title: sec['title'], cinema: cinema)
+        movie = Movie.find_by(title: sec['title'])
         # 同一タイトルの映画がない場合は新規作成
         movie = Movie.create!(
-          cinema:     cinema,
           title:      sec['title'],
           image_link: sec['image']
         ) if movie.nil?
@@ -106,6 +105,7 @@ namespace :get_schedules do
           next if sch['start'].to_s.empty? || sch['end'].to_s.empty?
 
           Schedule.create!(
+            cinema:      cinema,
             movie:       movie,
             date:        target_date,
             screen:      sch['screen'],
@@ -186,10 +186,9 @@ namespace :get_schedules do
         end
         image_link = movie_id.present? ? "https://www.aeoncinema.com/movie_images/#{movie_id}/poster400x560.jpg" : ""
 
-        movie = Movie.find_by(title: title, cinema: cinema)
+        movie = Movie.find_by(title: title)
         # 同一タイトルの映画がない場合は新規作成
         movie = Movie.create!(
-          cinema:     cinema,
           title:      title,
           image_link: image_link
         ) if movie.nil?
@@ -203,6 +202,7 @@ namespace :get_schedules do
           screen = schedule["location"]["name"]["ja"]
 
           Schedule.create!(
+            cinema:      cinema,
             movie:       movie,
             date:        target_date,
             screen:      screen,
@@ -278,10 +278,9 @@ namespace :get_schedules do
 
       # 以降は「値」だけを使うので stale とは無縁
       sections_data.each do |sec|
-        movie = Movie.find_by(title: sec['title'], cinema: cinema)
+        movie = Movie.find_by(title: sec['title'])
         # 同一タイトルの映画がない場合は新規作成
         movie = Movie.create!(
-          cinema:     cinema,
           title:      sec['title'],
           image_link: sec['image']
         ) if movie.nil?
@@ -290,6 +289,7 @@ namespace :get_schedules do
           next if sch['start'].to_s.empty? || sch['end'].to_s.empty?
 
           Schedule.create!(
+            cinema:      cinema,
             movie:       movie,
             date:        target_date,
             screen:      sch['screen'],

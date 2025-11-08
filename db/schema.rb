@@ -20,15 +20,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_112045) do
   end
 
   create_table "movies", force: :cascade do |t|
-    t.integer "cinema_id", null: false
     t.datetime "created_at", null: false
     t.string "image_link"
     t.string "title"
     t.datetime "updated_at", null: false
-    t.index ["cinema_id"], name: "index_movies_on_cinema_id"
   end
 
   create_table "schedules", force: :cascade do |t|
+    t.integer "cinema_id", null: false
     t.datetime "created_at", null: false
     t.date "date"
     t.time "end_time"
@@ -36,6 +35,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_112045) do
     t.string "screen"
     t.time "start_time"
     t.datetime "updated_at", null: false
+    t.index ["cinema_id"], name: "index_schedules_on_cinema_id"
     t.index ["movie_id"], name: "index_schedules_on_movie_id"
   end
 end

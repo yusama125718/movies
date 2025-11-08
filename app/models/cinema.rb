@@ -1,3 +1,3 @@
 class Cinema < ApplicationRecord
-  has_many :movies, dependent: :destroy
+  has_many :schedules, dependent: :destroy
 end
